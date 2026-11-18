@@ -44,11 +44,19 @@ export function toUpstreamEventDetail(event: MockEvent, locale: Locale) {
   };
 }
 
+const categoryNames: Record<MockEvent["category"], string[]> = {
+  music: ["music", "موسيقى"],
+  tech: ["tech", "تقنية"],
+  food: ["food", "طعام"],
+  art: ["art", "فن"],
+  sports: ["sports", "رياضة"],
+};
+
 export function searchEvents(q: string | null): MockEvent[] {
   const needle = q?.trim().toLowerCase();
   if (!needle) return mockEvents;
   return mockEvents.filter((event) =>
-    [event.title.en, event.title.ar, event.city.en, event.city.ar, event.category].some((value) =>
+    [event.title.en, event.title.ar, event.city.en, event.city.ar, ...categoryNames[event.category]].some((value) =>
       value.toLowerCase().includes(needle),
     ),
   );

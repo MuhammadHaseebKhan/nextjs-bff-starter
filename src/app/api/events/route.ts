@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { z } from "zod";
+import { LOCALE_COOKIE, resolveLocale } from "@/i18n/config";
 import { listEvents } from "@/server/events";
 import { problemResponse, toProblemResponse } from "@/server/http/problem";
 
@@ -13,8 +14,9 @@ export async function GET(request: NextRequest) {
     return problemResponse({ status: 400, title: "Invalid query", detail: query.error.issues[0]?.message });
   }
 
+  const locale = resolveLocale(request.cookies.get(LOCALE_COOKIE)?.value);
   try {
-    const events = await listEvents(query.data, { signal: request.signal });
+    const events = await listEvents(query.data, { locale, signal: request.signal });
     return Response.json(events);
   } catch (error) {
     return toProblemResponse(error);
